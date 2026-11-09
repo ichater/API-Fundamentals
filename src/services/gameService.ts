@@ -2,21 +2,30 @@ import { Chess, type Square } from 'chess.js';
 
 const chess = new Chess();
 
-// chess.move('e4');
-// chess.move('e5');
-// chess.move('f4');
+chess.setHeader('White', 'player-123');
+chess.setHeader('Black', 'player-456');
+
+chess.move('e4');
+chess.move('e5');
+chess.move('f4');
 
 // console.log(chess.ascii());
 
-// console.log(chess.fen());
+// const fen = chess.fen();
 
-// // chess.history({verbose:true}) returns an array of moves made in the game
+console.log(chess.pgn());
 
-// const history = chess.history({ verbose: true });
+// chess.history({verbose:true}) returns an array of moves made in the game
 
-// // console.log(history);
+const history = chess.history({ verbose: true });
 
-// const backAMove = new Chess(history[history.length - 1].before);
+// console.log(history);
+
+const newerChess = new Chess();
+
+newerChess.loadPgn(chess.pgn());
+
+console.log(newerChess.ascii());
 
 // console.log(backAMove.ascii());
 

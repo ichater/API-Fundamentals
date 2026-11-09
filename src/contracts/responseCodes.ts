@@ -1,9 +1,11 @@
 export type ErrorResponseCodes =
   'INVALID_MOVE' | 'GAME_NOT_FOUND' | 'INVALID_REQUEST' | 'INVALID_SQUARE' | 'INTERNAL_ERROR';
 
-type ResponseCodes = 'SUCCESS' | ErrorResponseCodes;
+export type SuccessResponseCodes = 'SUCCESS';
 
-export const ErrorResponseCodes: Record<ErrorResponseCodes, ErrorResponseCodes> = {
+type ResponseCodes = SuccessResponseCodes | ErrorResponseCodes;
+
+export const ErrorResponseCodeMap: Record<ErrorResponseCodes, ErrorResponseCodes> = {
   INVALID_MOVE: 'INVALID_MOVE',
   GAME_NOT_FOUND: 'GAME_NOT_FOUND',
   INVALID_REQUEST: 'INVALID_REQUEST',
@@ -12,6 +14,6 @@ export const ErrorResponseCodes: Record<ErrorResponseCodes, ErrorResponseCodes> 
 } as const;
 
 export const ResponseCodes: Record<ResponseCodes, ResponseCodes> = {
-  ...ErrorResponseCodes,
+  ...ErrorResponseCodeMap,
   SUCCESS: 'SUCCESS',
 };

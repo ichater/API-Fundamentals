@@ -1,4 +1,4 @@
-import { Chess } from 'chess.js';
+import { Chess, Color, PieceSymbol, Square } from 'chess.js';
 import { BoardWithIds } from '../models/types.js';
 
 // This might only be needed for the ui
@@ -25,9 +25,15 @@ const colMap: Record<string, string> = {
   ['7']: 'h',
 };
 
+type Board = ({
+  square: Square;
+  type: PieceSymbol;
+  color: Color;
+} | null)[][];
+
 // this is intended to bne the shape the ui will receive
-export const generateBoard = (chess: Chess): BoardWithIds =>
-  chess.board().map((row, rowIndex) =>
+export const generateBoard = (board: Board): BoardWithIds =>
+  board.map((row, rowIndex) =>
     row.map((piece, colIndex) => ({
       ...piece,
       id: `${colMap[colIndex]}${rowMap[rowIndex]}`,
