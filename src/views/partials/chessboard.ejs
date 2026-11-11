@@ -1,0 +1,32 @@
+<div class="chessboard-container">
+    <div class="board-wrapper">
+    <div class="vertical-number-wrapper">
+        <% for (let i = 0; i < 8; i++) { %>
+                <div class="square-legend">
+                    <%= '87654321'[i] %>
+                </div>
+            <% } %>
+    </div>
+    <div class="horizontal-board-wrapper">
+        <div id="chessboard" class="chessboard">
+            <% for (let rank = 8; rank >= 1; rank--) { %>
+                <% for (let file = 0; file < 8; file++) { %>
+                    <div
+                        class="square <%= (rank + file) % 2 === 0 ? 'light' : 'dark' %>"
+                        data-square="<%= 'abcdefgh'[file] + rank %>"
+                    >
+                        <img class="piece" alt="" hidden>
+                    </div>
+                <% } %>
+            <% } %>
+        </div>
+        <div class="horizontal-number-wrapper">
+             <% for (let i = 0; i < 8; i++) { %>
+            <div class="square-legend">
+                <%= 'abcdefgh'[i] %>
+            </div>
+        <% } %>
+        </div>
+    </div>
+</div>
+</div>
