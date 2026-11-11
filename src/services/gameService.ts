@@ -1,43 +1,83 @@
+import { randomUUID } from 'node:crypto';
 import { Chess, type Square } from 'chess.js';
+import type { BoardWithIds, GameRecord, MakeMove } from '../models/types.js';
+import { generateBoard } from '../utils/parseChessBoard.js';
+import { gameRepository } from './db.js';
 
-const chess = new Chess();
+export class InvalidMoveError extends Error {
+  constructor() {
+    super('Invalid move');
+    this.name = 'InvalidMoveError';
+  }
+}
 
-chess.setHeader('White', 'player-123');
-chess.setHeader('Black', 'player-456');
-
-chess.move('e4');
-chess.move('e5');
-chess.move('f4');
-
-// console.log(chess.ascii());
-
-// const fen = chess.fen();
-
-console.log(chess.pgn());
-
-// chess.history({verbose:true}) returns an array of moves made in the game
-
-const history = chess.history({ verbose: true });
-
-// console.log(history);
-
-const newerChess = new Chess();
-
-newerChess.loadPgn(chess.pgn());
-
-console.log(newerChess.ascii());
-
-// console.log(backAMove.ascii());
-
-export const getMoves = (chess: Chess, move: Square) => {
-  const moves = chess.moves({ square: move, verbose: true });
-  // will return empty array if no moves are available for the piece on the square
-  return moves;
+const loadChessGame = (record: GameRecord): Chess => {
+  const chess = new Chess();
+  chess.loadPgn(record.game);
+  return chess;
 };
 
-export const newGame = () => {
+export const createGame = async (): Promise<{ id: string; board: BoardWithIds }> => {
   const chess = new Chess();
-  return chess;
+  chess.setHeader('White', '456');
+  chess.setHeader('Black', '123');
+
+  const game: GameRecord = {
+    id: randomUUID(),
+    black_id: '123',
+    white_id: '456',
+    status: 'ongoing',
+    game: chess.pgn(),
+  };
+
+  await gameRepository.insert(game);
+
+  return { id: game.id, board: generateBoard(chess.board()) };
+};
+
+export const getAllGames = (): Promise<GameRecord[]> => gameRepository.findAll();
+
+export const getGame = async (id: string): Promise<Chess | null> => {
+  const game = await gameRepository.findById(id);
+
+  if (!game || game.status !== 'ongoing') {
+    return null;
+  }
+
+  return loadChessGame(game);
+};
+
+export const getGameBoard = async (id: string): Promise<BoardWithIds | null> => {
+  const chess = await getGame(id);
+  return chess ? generateBoard(chess.board()) : null;
+};
+
+export const getMoves = async (id: string, square: Square): Promise<string[] | null> => {
+  const chess = await getGame(id);
+  return chess ? chess.moves({ square }) : null;
+};
+
+export const makeMove = async (id: string, move: MakeMove): Promise<BoardWithIds | null> => {
+  const game = await gameRepository.findById(id);
+
+  if (!game || game.status !== 'ongoing') {
+    return null;
+  }
+
+  const chess = loadChessGame(game);
+
+  try {
+    chess.move(move);
+  } catch {
+    throw new InvalidMoveError();
+  }
+
+  await gameRepository.update({
+    ...game,
+    status: chess.isGameOver() ? 'finished' : game.status,
+    game: chess.pgn(),
+  });
+  return generateBoard(chess.board());
 };
 
 const squareArray: Square[] = [

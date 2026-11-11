@@ -18,3 +18,11 @@ export type BoardSquare = {
 export type BoardWithIds = BoardSquare[][];
 
 export type MakeMove = { from: string; to: string };
+
+export type GameRecord = {
+  id: string;
+  black_id: string;
+  white_id: string;
+  status: 'ongoing' | 'finished';
+  game: string;
+};
