@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
-import { InvalidMoveError, isValidSquare } from '../services/gameService.js';
+import { InvalidMoveError } from '../services/gameService.js';
+import { isValidSquare } from '../utils/isValidSquare.js';
 import type { MakeMove } from '../models/types.js';
 import {
   gameNotFoundResponse,
