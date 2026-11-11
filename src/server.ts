@@ -1,13 +1,6 @@
-import express, { request, response } from 'express';
-import gameRoutes from './routes/gameRoutes.js';
+import app from './app.js';
+import config from './configs/config.js';
 
-const server = express();
-
-server.use(express.json());
-
-server.get('/', (req, res) => {
-  res.send('endpoint is working');
+app.listen(config.port, () => {
+  console.log(`Server is running on port http://localhost:${config.port}/`);
 });
-server.use('/', gameRoutes);
-
-export default server;

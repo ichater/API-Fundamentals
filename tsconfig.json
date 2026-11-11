@@ -11,5 +11,5 @@
     // "emitDeclarationOnly": false,
     // "allowImportingTsExtensions": true
   },
-  "exclude": ["node_modules", "dist", ".prettierrc", ".eslintrc.json"]
+  "exclude": ["node_modules", "dist", "tests", ".prettierrc", ".eslintrc.json"]
 }
